@@ -51,8 +51,6 @@ async function get_token(){
   }
 }
 
-// Authorization token that must have been created previously. See : https://developer.spotify.com/documentation/web-api/concepts/authorization
-
 async function fetchWebApi(endpoint, method, token, body) {
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
     headers: {
@@ -71,26 +69,9 @@ async function getTopTracks(token){
   )).items;
 }
 
-// (async main() => {
-//   try {
-//       // const token = await get_token();
-//       const topTracks = await getTopTracks();
-
-//       console.log(
-//           topTracks?.map(
-//               ({ name, artists }) =>
-//                   `${name} by ${artists.map(artist => artist.name).join(', ')}`
-//           )
-//       );
-//   } catch (error) {
-//       console.error("Error:", error);
-//   }
-// })
-// main();
-
 async function main() {
   try {
-    var token = await get_token(); 
+    var token = await get_token(); //gets access token
     const topTracks = await getTopTracks(token);
 
     console.log(
@@ -105,6 +86,5 @@ async function main() {
     console.error("Error: " + error)
   }
 }
-
 
 main(); 
