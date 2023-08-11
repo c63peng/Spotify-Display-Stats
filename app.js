@@ -1,5 +1,3 @@
-
-
 //importing fetch 
 const  fetch  = require ("node-fetch"); 
 //server set up 
@@ -19,14 +17,7 @@ const client_id = 'd5a5e3fb3ccc4d7f849de23697cd1393';
 const client_secret = 'a223ea535b6a484d8f760ef13faf62d7';
 const url = 'https://accounts.spotify.com/api/token'; 
 
-//Prepare request parameteres in URL-enocded format 
-const params = new URLSearchParams();  //works with the query string of a URL to set key-values
-params.append('grant_type', 'client_credentials');
-params.append('client_id', client_id);
-params.append('client_secret', client_secret);
-
 app.listen(PORT, () => {
-    //use backticks `  ` instead of single quotes '' to display variables using string interpolation
     console.log(`App is listening on port ${PORT}`);
 })
 
@@ -35,62 +26,112 @@ app.listen(PORT, () => {
 //      - H "Content-Type: application/x-www-form-urlencoded"
 //      - d "grant_type=client_credentials&client_id=d5a5e3fb3ccc4d7f849de23697cd1393&client_secret=a223ea535b6a484d8f760ef13faf62d7"
 
-const get_token = async () => {
+const get_token = async (endpoint, method, body) => {
+        //Prepare request parameteres in URL-enocded format 
+    const params = new URLSearchParams();  //works with the query string of a URL to set key-values
+    params.append('grant_type', 'client_credentials');
+    params.append('client_id', client_id);
+    params.append('client_secret', client_secret);
+
     const result = await fetch (url,{
     method: "POST", 
     headers : {
-        "Content-Type" : "application/x-www-form-urlencoded"
+        'Content-Type' : 'application/x-www-form-urlencoded'
     }, 
+    //; application/json
     body : params
     })
 
-    let token = await result.json(); 
-    return token;
+    console.log("Response Status: ", result.status); 
+
+    const bodyText = await result.text(); //read the body text 
+    // console.log("Response text: ", await result.text()); 
+    console.log("Response text: ", await bodyText); 
+    // const token_repsonse = await bodyText.json();
+    // const access_token = token_repsonse.access_token; 
+    // // console.log("Access token:", access_token);
+    // return access_token;
+    try {
+        const token_response = JSON.parse(bodyText); // Parse the JSON body
+        const access_token = token_response.access_token;
+
+        const res = await fetch (`https://api.spotify.com/${endpoint}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+        method,
+        body:JSON.stringify(body)
+        });
+
+        return await res.json();
+        // return access_token;
+    } catch (error) {
+        throw new Error("Error parsing token response: " + error.message);
+    }
 }
 
-get_token().then(token => {console.log(token);})
-    // .then(response => {
-    //     if (!response.ok){
-    //         throw new Error(`HTTP error! Status ${response.status}`);
-    //     }
-    //     // console.log("token available");
-    //     console.log(response); 
-    //     return response.json(); 
-    // })
 
 const userurl = 'https://api.spotify.com/v1/me/top/artists';
 
-const get_data = async() => {
-    const response = await fetch (userurl, {
-        method: "GET", 
-        headers: {
-            "Authorization" : "Bearer " + `${get_token()}`
-        }, 
-    })
+// const get_data = async(access_token) => {
 
-    let data = await response.json()
-    return data; 
+//     // console.log("Access token in get_data(): " + access_token); 
+//     const response = await fetch (userurl, {
+//         method: 'GET', 
+//         headers: {'Authorization' : 'Bearer ' + access_token,}, 
+//     });
+
+//     if (response.status === 401){
+//         throw new Error("Missing token"); 
+//     }
+
+//     let data = await response.json()
+
+//     console.log(data);
+     
+//     return data; 
+// }
+
+// const fetch_web_api = async(endpoint, method, body ) => {
+//     const res = await fetch (`https://api.spotify.com/${endpoint}`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//         method,
+//         body:JSON.stringify(body)
+//     });
+//     return await res.json();
+// }
+
+async function getTopTracks(){
+ // Endpoint reference : https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
+    const tracks = await get_token('v1/me/top/tracks?time_range=short_term&limit=5', 'GET')
+    return tracks.items;
 }
+   
+  
+const topTracks = async () =>{
+    const tracks = await getTopTracks();
+    // await getTopTracks() }; 
 
-get_data().then(data => console.log(data)); 
-console.log(get_token());
-// get_data();  
+    console.log(
+        topTracks?.map(({name, artists}) =>
+            `${name} by ${artists.map(artist => artist.name).join(', ')}`
+        )
+    );
+};    
+
+topTracks();
+// topTracks();
+  
+// get_token()
+//     .then((access_token) => get_data(access_token))
+//     .catch((error) => console.error("Error getting data: ",error )); 
 
 //     curl --request GET \
 //   --url https://api.spotify.com/v1/me/top/artists \
 //   --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z'
 
-// const access_token = 'BQCezNaVywlmE2z22EQTLEiUy4FvA7R0pV5x65aJibFXYDlRNiVXfcfvjTPLL-WOWK8K_Q2SfkvRqpMIcjAUqYNFGzjO3y5JTzAhLztZ_UXd2BXKqVY'
-
-// fetch (userurl, {
-//     method: "GET", 
-//     header : {
-//         "Authorization" : `Bearer ${access_token}`, 
-//     }
-// })
 
 
-// result; 
-// const {access_token} = result.json(); 
-// return access_token; 
-// console.log(`${access_token}`); 
+
