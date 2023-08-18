@@ -39,6 +39,7 @@ async function get_access_token(){
 
 async function fetch_web_Api(endpoint, method, token, body) {
   const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+    // https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=5
     headers: {
       Authorization: `Bearer ${token}`,
     },
