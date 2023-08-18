@@ -65,26 +65,34 @@
     </script>
 
     <div> 
-      <button onclick="getTopArtists(access_token)">Get your top artists</button>
+      <button onclick="profile()">Get your top artists</button>
     </div>
 
     <script type = "text/javascript">
       const getTopArtists = async (token) => {
-        const { data } = await fetch ("https://api.spotify.com/v1/me/top/artists",{
+        const api_url = "https://api.spotify.com/v1/me"
+        //"https://api.spotify.com/v1/me/top/artists"
+        const data = await fetch (api_url,{
           method: "GET", 
           headers: {
           Authorization: `Bearer ${token}`, 
           },
         }); 
-
-      console.log(token);
-      console.log(data);
+        
+        console.log(`token passed: ${token}`);
+        // console.log(data);
+        
+        return await data.json();
+      
       // setData(data);
       };
-
-      // document.getElementById("display-top-artists").addEventListener('Click', function () {
-      //   console.log("button clicked"); 
-      // }); 
+      
+      const profile = async () => {
+        const profile_data = await getTopArtists(access_token); 
+        console.log(`profile id: ${profile_data.id}`);
+        console.log(`profile email: ${profile_data.email}`);
+        console.log(`profile uri: ${profile_data.uri}`); 
+      }; 
 
     </script>
    

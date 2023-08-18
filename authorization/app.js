@@ -2,7 +2,7 @@ const express = require('express');
 const querystring = require('querystring');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const  fetch  = require ("node-fetch"); 
+const fetch = require ("node-fetch"); 
 
 const client_id = 'd5a5e3fb3ccc4d7f849de23697cd1393';
 const client_secret = 'a223ea535b6a484d8f760ef13faf62d7'; // important to protect this one
@@ -34,7 +34,7 @@ app.get('/login', function (req, res) { // handle login request from the hyperli
     res.cookie(stateKey, state); // set cookie to travel with request
 
     // request authorization - automatically redirects to callback
-    const scope = 'user-read-private user-read-email';
+    const scope = 'user-read-private user-read-email user-library-read';
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
@@ -97,12 +97,6 @@ app.get('/callback', function (req, res) {
 });
 
 app.get('/refresh_token', function (req, res) {
-
-    /*
-    I included an example refresh token request since it's useful to have, but this should obviously be implemented
-    in a different way than just having the user press a button on the screen - access tokens expire after 
-    2 hours (I believe) so you'll need to manage refreshes based on that
-    */
 
     const refresh_token = req.query.refresh_token;
     const authOptions = {
