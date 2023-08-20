@@ -33,8 +33,8 @@ app.get('/login', function (req, res) { // handle login request from the hyperli
     let state = generateRandomString(16);
     res.cookie(stateKey, state); // set cookie to travel with request
 
-    // request authorization - automatically redirects to callback
-    const scope = 'user-read-private user-read-email user-library-read';
+    // request authorization - automatically redirects to callback read-birthdate  user-library-read
+    const scope = 'user-read-private user-read-email user-top-read user-read-playback-state user-top-read';
     res.redirect('https://accounts.spotify.com/authorize?' +
         querystring.stringify({
             response_type: 'code',
