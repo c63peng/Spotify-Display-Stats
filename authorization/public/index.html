@@ -19,9 +19,14 @@
         <button id="refresh-token">Get a New Token!</button> 
         
         <div> 
-        <button onclick="topTracks()">Get your top artists</button>
+        <button onclick="displayTopTracks()">Get your top artists</button>
         </div>
     </div>
+
+    <ul id="track-list">
+        <!-- Tracks will be displayed here -->
+    </ul>
+
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
     <script>
@@ -67,13 +72,11 @@
 
     </script>
 
-   
 
     <script type = "text/javascript">
 
     const fetchWebApi = async (token) => {
-        const api_url_test = "https://api.spotify.com/v1/me"; 
-        const api_url = "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=5"; 
+        const api_url = "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10"; 
 
         const data = await fetch (api_url,{
           method: "GET", 
@@ -88,46 +91,36 @@
         if (!data.ok) {
             throw new Error(`API request failed with status: ${data.status}`);
         }else{
-            console.log("data is ok"); 
-            console.log(`api call from ${api_url}`); 
+            console.log(`data is ok, api call from ${api_url}`); 
         }; 
         
     return await data.json();
     };
-      
-    // async function getTopTracks(){
-    //     return (await fetchWebApi(access_token)).items; 
-    // }
     
-    const topTracks = async () => {
+    const getTopTracks = async () => {
 
-        console.log(`topTracks token passed: ${access_token}`);
-
-        const responseData = await fetchWebApi(access_token); // Wait for the promise to resolve
-        const tracks = responseData.items; // Access the 'items' property
-
-        console.log(
-            tracks?.map(
-                ({ name, artists }) =>
-                    `${name} by ${artists.map(artist => artist.name).join(', ')}`
-            )
-        );
         // console.log(`topTracks token passed: ${access_token}`);
-
-        // tracks = await fetchWebApi(access_token).items 
-        // // console.log(tracks);
-        // console.log(
-        //     tracks?.map(
-        //         ({name, artists}) =>
-        //            `${name} by ${artists.map(artist => artist.name).join(', ')}`
-        //     )); 
-            
-        // const response_data = await getTopArtists(access_token);  
-
+        const responseData = await fetchWebApi(access_token); // Wait for the promise to resolve
+        const tracksData = responseData.items; // Access the 'items' property
+        return tracksData; 
     }; 
 
+    function displayTopTracks() {
+        // document.body.innerHTML="";
+        getTopTracks().then(tracks => {
+            const trackList = document.getElementById("track-list");
+            trackList.innerHTML = ''; // Clear existing content
+
+            tracks?.forEach(track => {
+                const li = document.createElement("li");
+                li.textContent = `${track.name} by ${track.artists.map(artist => artist.name).join(', ')}`;
+                 trackList.appendChild(li);
+            });
+        });
+    }
+    
     </script>
-   
+ 
     
 
 </body>
