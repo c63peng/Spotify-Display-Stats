@@ -100,15 +100,27 @@
     // }
     
     const topTracks = async () => {
+
         console.log(`topTracks token passed: ${access_token}`);
 
-        tracks = await fetchWebApi(access_token).items 
+        const responseData = await fetchWebApi(access_token); // Wait for the promise to resolve
+        const tracks = responseData.items; // Access the 'items' property
 
         console.log(
             tracks?.map(
-                ({name, artists}) =>
-                   `${name} by ${artists.map(artist => artist.name).join(', ')}`
-            )); 
+                ({ name, artists }) =>
+                    `${name} by ${artists.map(artist => artist.name).join(', ')}`
+            )
+        );
+        // console.log(`topTracks token passed: ${access_token}`);
+
+        // tracks = await fetchWebApi(access_token).items 
+        // // console.log(tracks);
+        // console.log(
+        //     tracks?.map(
+        //         ({name, artists}) =>
+        //            `${name} by ${artists.map(artist => artist.name).join(', ')}`
+        //     )); 
             
         // const response_data = await getTopArtists(access_token);  
 
