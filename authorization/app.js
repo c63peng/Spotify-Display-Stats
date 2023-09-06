@@ -4,8 +4,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const fetch = require ("node-fetch"); 
 
-const client_id = 'd5a5e3fb3ccc4d7f849de23697cd1393';
-const client_secret = 'a223ea535b6a484d8f760ef13faf62d7'; // important to protect this one
+const client_id = process.env.CLIENT_ID;
+const client_secret = process.env.CLIENT_SECRET; 
 const redirect_uri = 'http://localhost:8888/callback';
 const PORT = process.env.PORT || 8888; 
 const token_endpoint_URI = 'https://accounts.spotify.com/api/token'; 

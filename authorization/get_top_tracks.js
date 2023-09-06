@@ -68,12 +68,12 @@ async function _main(){
     const top_tracks = await get_top_tracks(access_token); 
     console.log("top tracks: " + top_tracks);  
 
-    // console.log(
-    //     top_tracks?.map(
-    //       ({name, artists}) =>
-    //         `${name} by ${artists.map(artist => artist.name).join(', ')}`
-    //     )
-    // )
+    console.log(
+        top_tracks?.map(
+          ({name, artists}) =>
+            `${name} by ${artists.map(artist => artist.name).join(', ')}`
+        )
+    )
 }
 
 // _main(); 
